@@ -1,3 +1,6 @@
+/* COP 3503C Assignment 4
+This program is written by: Kevin Dasrath */
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -13,6 +16,7 @@ public static int n;
 //moveset for a given index (down, up, left right)
 final public static int[] DX = {1, -1, 0, 0};
 final public static int[] DY = {0, 0, -1, 1};
+
 
 public static char[][] maze;
 
@@ -86,7 +90,7 @@ public static char[][] maze;
 
                     int z = 0;
                     while (z < occ) q.offer(locations[z]);
-                    
+
                     }
                     
 
