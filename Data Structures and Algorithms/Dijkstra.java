@@ -65,6 +65,8 @@ public static void findShortestPaths(Graph graph, int source, int n){
         Node node = minHeap.poll();
         
         // get the vertex number
+
+        //u is the current value in the queue were examining 
         int u = node.vertex;
 
         // do for each neighbor `v` of `u`
@@ -74,14 +76,31 @@ public static void findShortestPaths(Graph graph, int source, int n){
             int weight = edge.weight;
 
             // Relaxation step
-            if (!done[v] && (dist.get(u) + weight) < dist.get(v)){
+            if (!done[v] && 
+            
+            
+            //stopping point 7/7/24
+            //if the distance from u to v + the weight of the edge is less than the distance to v currently, that is the new shortest path
+            /*ex) if 1-> 5 is 50 , but 1 - > 4 -> 5 is 30 + 5 (with 30 being the cost to get to 4 from 1,
+             then that is the new shortest path to 5 since it is a lesser cost) */
+            (dist.get(u) + weight) < dist.get(v)){
+
+
+
+                // set the distance to get to vertex v as the shorter distance we just discovered
                 dist.set(v, dist.get(u) + weight);
+                //updates the last node before v to u (for printing path)
                 prev[v] = u;
+                //adds v with the new cheaper path to the min heap
                 minHeap.add(new Node(v, dist.get(v)));
+
             }
         }
         // mark vertex `u` as done so it will not get picked up again
+
+        //once a node has been visited for the first time, then it will get marked as done? 
         done[u] = true;
+
     }
 
     //printing the path
