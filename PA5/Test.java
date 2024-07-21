@@ -1,11 +1,11 @@
 /* COP 3503C Assignment 5
-This program is written by: Kevin Dasrath */
+This program is written by: Your Full Name */
 
 import java.util.*;
 
 
 
-public class Main{
+public class Test{
 // A class to store a graph edge
 
 
@@ -26,6 +26,8 @@ public static void main(String[] args)
         int b = stdin.nextInt();
         int c = stdin.nextInt();
         edges.add(new Edge(a - 1, b - 1, c));
+        if (a != S)
+        edges.add(new Edge(b - 1, a - 1, c));
     }
    
     int L = stdin.nextInt();
@@ -41,7 +43,12 @@ public static void findShortestPaths(Graph graph, int source, int n, int L){
 
     int city = 0;
     int road = 0;
+    
+    if (L == 0) city++;
+    else {
     boolean treasure[] = new boolean[n];
+    treasure[source] = true;
+    boolean roadT[][] = new boolean[n][n];
     // create a min-heap and push source node having distance 0
     PriorityQueue<Node> minHeap;
     minHeap = new PriorityQueue<>(Comparator.comparingInt(node -> node.weight));
@@ -83,14 +90,17 @@ public static void findShortestPaths(Graph graph, int source, int n, int L){
 
             if ((dist.get(u) + weight == L) && (!treasure[v])){
                 city++;
+                System.out.println("treasure found at city: " + v);
                 treasure[v] = true; 
             }
                 
-            else if ((dist.get(u) < L) && (dist.get(u) + weight > L)){
+            else if ((dist.get(u) < L) && (dist.get(u) + weight > L) && (!roadT[u][v])){
                 road++;
-                if ((dist.get(v) < L) && (dist.get(v) + weight > L))
-                    road++;
-
+                if (weight/2 + dist.get(v) == L){
+                    roadT[v][u] = true;
+                }
+                
+                System.out.println("Treasure found on road: "+ u + ", " + v);
             }
                 
             // Relaxation step
@@ -121,7 +131,7 @@ public static void findShortestPaths(Graph graph, int source, int n, int L){
 
     }
 
-    
+    }
     
     System.out.println("In city: " + city);
     System.out.println("On the road: " + road);
@@ -167,12 +177,15 @@ class Graph
         for (int i = 0; i < n; i++) 
         {
             adjList.add(new ArrayList<>());
+                      
+
         }   
     
         // add edges to the directed graph
         for (Edge edge: edges) 
         {
             adjList.get(edge.source).add(edge);
+             
             
         }
     }
