@@ -1,0 +1,10 @@
+My testing strategy involved building the ability to find cities first, and then roads. If a vertex was being visited and the total cost to get to it was equal to L, then it meant that the treasure could be found in a city. In order to prevent the same city from being added twice, a boolean value was kept too, so that if there was another path to get to said city that was also equal to L, the city would not be counted twice. 
+
+To find the locations along the roads that had treasure, I specifically looked at locations that lied on roads that had a starting value less than L, and an end value greater than L. This meant that some point on the road, there was a distance L from the capital city, where treasure could be found. As long as the point wasn't then half way point on the road, it would then be marked, and could be potentially traversed from the other direction to find treasure again. To keep track of whether a round had been checked, I used another boolean array.
+
+For the two tests I came up with the solutions are:
+
+Test 1: City 3, Road 1
+In this test case, the capital city is 3, acting almost as the center point between all cities. since all cities have to go through 3 to get any other city, it means that there is a high cost to travel city to city, so the treasure will be in the areas closest to city 3. 2 cities are directly 3 units away (2 and 6), with city 5 being the other, indirect city that has treasure (3 -> 1 -> 5). The path from 3 -> 4 is the only to contain the smaller unity of 3. 
+Test 2: City 1, Road 1
+For this test case, the 4 acts as the capital city, with direct connections to the city besides for city 3. The solution is only 2 locations for treasure since there is only one path where 4 units is prestn, being the path from 4 -> 2, and one city (1)

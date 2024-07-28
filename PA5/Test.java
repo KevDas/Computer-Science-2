@@ -1,11 +1,8 @@
-/* COP 3503C Assignment 5
-This program is written by: Your Full Name */
+/*Example implementation of the Dijkstra's Alg. */
 
 import java.util.*;
 
-
-
-public class Test{
+class Dijkstra{
 // A class to store a graph edge
 
 
@@ -26,8 +23,6 @@ public static void main(String[] args)
         int b = stdin.nextInt();
         int c = stdin.nextInt();
         edges.add(new Edge(a - 1, b - 1, c));
-        if (a != S)
-        edges.add(new Edge(b - 1, a - 1, c));
     }
    
     int L = stdin.nextInt();
@@ -36,19 +31,21 @@ public static void main(String[] args)
 
    
     findShortestPaths(graph, S - 1, C, L);
-    
 }
 
+//Run Dijkstra’s algorithm on a given graph
 public static void findShortestPaths(Graph graph, int source, int n, int L){
 
     int city = 0;
     int road = 0;
-    
+
     if (L == 0) city++;
     else {
-    boolean treasure[] = new boolean[n];
-    treasure[source] = true;
-    boolean roadT[][] = new boolean[n][n];
+
+        boolean treasure[] = new boolean[n];
+        treasure[source] = true;
+        boolean roadT[][] = new boolean[n][n];
+
     // create a min-heap and push source node having distance 0
     PriorityQueue<Node> minHeap;
     minHeap = new PriorityQueue<>(Comparator.comparingInt(node -> node.weight));
@@ -85,24 +82,8 @@ public static void findShortestPaths(Graph graph, int source, int n, int L){
         for (Edge edge: graph.adjList.get(u)){
         
             int v = edge.dest;
-
             int weight = edge.weight;
 
-            if ((dist.get(u) + weight == L) && (!treasure[v])){
-                city++;
-                System.out.println("treasure found at city: " + v);
-                treasure[v] = true; 
-            }
-                
-            else if ((dist.get(u) < L) && (dist.get(u) + weight > L) && (!roadT[u][v])){
-                road++;
-                if (weight/2 + dist.get(v) == L){
-                    roadT[v][u] = true;
-                }
-                
-                System.out.println("Treasure found on road: "+ u + ", " + v);
-            }
-                
             // Relaxation step
             if (!done[v] && 
             
@@ -131,12 +112,41 @@ public static void findShortestPaths(Graph graph, int source, int n, int L){
 
     }
 
+    //printing the path
+    List<Integer> route = new ArrayList<>();
+    for (int i = 0; i < n; i++){
+        if (i != source && dist.get(i) != Integer.MAX_VALUE){
+
+            getRoute(prev, i, route);
+            
+            if ((dist.get(i) == L) && (!treasure[i])){
+                city++;
+                treasure[i] = true; 
+            }
+                
+            else if ((dist.get(prev[i]) < L) && (dist.get(i) > L) && (!roadT[i][prev[i]]) && (dist.get(i) != L)){
+                road++;
+                if ((dist.get(i) - dist.get(prev[i])/2) + dist.get(prev[i]) == L){
+                    roadT[prev[i]][i] = true;
+                    roadT[i][prev[i]] = true; 
+                }
+            }  
+            
+            route.clear();
+        }
     }
-    
-    System.out.println("In city: " + city);
-    System.out.println("On the road: " + road);
+
+}
 }
 
+private static void getRoute(int[] prev, int i, List<Integer> route){
+
+    if (i >= 0){
+            
+    getRoute(prev, prev[i], route);
+    route.add(i);
+    }
+}
 
 }
 
@@ -177,16 +187,12 @@ class Graph
         for (int i = 0; i < n; i++) 
         {
             adjList.add(new ArrayList<>());
-                      
-
         }   
     
         // add edges to the directed graph
         for (Edge edge: edges) 
         {
             adjList.get(edge.source).add(edge);
-             
-            
         }
     }
 }

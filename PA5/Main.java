@@ -6,7 +6,6 @@ import java.util.*;
 
 
 public class Main{
-// A class to store a graph edge
 
 
 public static void main(String[] args)
@@ -22,10 +21,13 @@ public static void main(String[] args)
     List<Edge> edges = new ArrayList<>();
 
     for (int i = 0; i < R; ++i){
+        //read in the edge values and add them to edge list
         int a = stdin.nextInt();
         int b = stdin.nextInt();
         int c = stdin.nextInt();
         edges.add(new Edge(a - 1, b - 1, c));
+        if (a != S)
+        edges.add(new Edge(b - 1, a - 1, c));
     }
    
     int L = stdin.nextInt();
@@ -33,15 +35,26 @@ public static void main(String[] args)
     Graph graph = new Graph(edges, C);
 
    
-    findShortestPaths(graph, S - 1, C, L);
+    dijkstra(graph, S - 1, C, L);
     
 }
 
-public static void findShortestPaths(Graph graph, int source, int n, int L){
+public static void dijkstra(Graph graph, int source, int n, int L){
 
+    //keep track of counts of where treasure is located
     int city = 0;
     int road = 0;
+    
+    //edge case where treasure is in the city 
+    if (L == 0) city++;
+    else {
+    
+    //keep track of whether a city has been visited
     boolean treasure[] = new boolean[n];
+    treasure[source] = true;
+    //keep track of whether a road has been visited
+    boolean roadT[][] = new boolean[n][n];
+
     // create a min-heap and push source node having distance 0
     PriorityQueue<Node> minHeap;
     minHeap = new PriorityQueue<>(Comparator.comparingInt(node -> node.weight));
@@ -69,7 +82,6 @@ public static void findShortestPaths(Graph graph, int source, int n, int L){
         // Remove and return the best vertex
         Node node = minHeap.poll();
         
-        // get the vertex number
 
         //u is the current value in the queue were examining 
         int u = node.vertex;
@@ -81,47 +93,36 @@ public static void findShortestPaths(Graph graph, int source, int n, int L){
 
             int weight = edge.weight;
 
+            //if the treasure is in a city
             if ((dist.get(u) + weight == L) && (!treasure[v])){
                 city++;
                 treasure[v] = true; 
             }
                 
-            else if ((dist.get(u) < L) && (dist.get(u) + weight > L)){
+            //if the treasure is on the road
+            else if ((dist.get(u) < L) && (dist.get(u) + weight > L) && (!roadT[u][v])){
                 road++;
-                if ((dist.get(v) < L) && (dist.get(v) + weight > L))
-                    road++;
-
+                if (weight/2 + dist.get(v) == L){
+                    roadT[v][u] = true;
+                }
+                
             }
                 
-            // Relaxation step
-            if (!done[v] && 
             
-            
-            //stopping point 7/7/24
-            //if the distance from u to v + the weight of the edge is less than the distance to v currently, that is the new shortest path
-            /*ex) if 1-> 5 is 50 , but 1 - > 4 -> 5 is 30 + 5 (with 30 being the cost to get to 4 from 1,
-             then that is the new shortest path to 5 since it is a lesser cost) */
-            (dist.get(u) + weight) < dist.get(v)){
+            if (!done[v] && (dist.get(u) + weight) < dist.get(v)){
 
-
-
-                // set the distance to get to vertex v as the shorter distance we just discovered
                 dist.set(v, dist.get(u) + weight);
-                //updates the last node before v to u (for printing path)
                 prev[v] = u;
-                //adds v with the new cheaper path to the min heap
                 minHeap.add(new Node(v, dist.get(v)));
 
             }
         }
-        // mark vertex `u` as done so it will not get picked up again
 
-        //once a node has been visited for the first time, then it will get marked as done? 
         done[u] = true;
 
     }
 
-    
+    }
     
     System.out.println("In city: " + city);
     System.out.println("On the road: " + road);
@@ -167,12 +168,15 @@ class Graph
         for (int i = 0; i < n; i++) 
         {
             adjList.add(new ArrayList<>());
+                      
+
         }   
     
         // add edges to the directed graph
         for (Edge edge: edges) 
         {
             adjList.get(edge.source).add(edge);
+             
             
         }
     }
